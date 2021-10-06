@@ -28,7 +28,6 @@ const urlencodedParser = express.json();
      } catch (err) {
          console.log(err)
      }
-
  })
 
  app.get("/GetPosts",urlencodedParser,async (request, response)=>{
