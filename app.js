@@ -1,5 +1,6 @@
 const express = require("express");
 const User = require ("./Model/user")
+require('dotenv').config();
 const Post = require ("./Model/post")
 const cors = require('cors')
 const app = express();
@@ -91,4 +92,9 @@ app.put("/PostUpdate",urlencodedParser, (request, response)=>{
     })
 })
 
-  app.listen(3001)
+app.listen(process.env.PORT,()=> console.log("server work"))
+process.on('SIGTERM', () => {
+    app.close(() => {
+        console.log("server stopped")
+    })
+})
