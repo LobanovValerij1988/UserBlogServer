@@ -2,6 +2,7 @@ const  Post  = require("./post");
 const Sequelize = require("sequelize");
 const sequelize = require("../DB/dbconnection")
 
+
 const User = sequelize.define("user",{
     id: {
         type: Sequelize.INTEGER,
@@ -19,7 +20,10 @@ const User = sequelize.define("user",{
     },
 })
 
-User.hasMany(Post)
+User.hasMany(Post.Post)
 
+async function findUserByLoginAndPassword (login,password){
+    return  await User.findOne({where:{name: login, password : password}})
+}
 
- module.exports = User
+ module.exports.findUserByLoginAndPassword = findUserByLoginAndPassword;
