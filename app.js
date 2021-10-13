@@ -29,7 +29,7 @@ const urlencodedParser = express.json();
      }
  })
 
- app.get("/GetPosts",urlencodedParser,async (request, response)=>{
+app.get("/GetPosts",urlencodedParser,async (request, response)=>{
      try {
            const posts = await Post.getAllPostsForUser(request.query.id);
            if(!posts)  {
@@ -48,13 +48,9 @@ const urlencodedParser = express.json();
 
 app.post("/SavePost", upload.single('picture'), async (request, response)=>{
      try{
-          const errorInFile = await Post.savePost(request.file, request.body.title, request.body.articleContent, request.body.userId )
-          if(errorInFile){
-                 response.status(400).send(errorInFile)
-                 return
-             }
-          response.status(200).send("article was saved")
-        }
+          const savedPost = await Post.savePost(request.file, request.body.title, request.body.articleContent, request.body.userId )
+          response.status(200).json(savedPost)
+     }
      catch (e){
           response.status(500).send(e)
      }
@@ -72,12 +68,9 @@ app.delete("/DeletePost", urlencodedParser, async (request, response)=>{
 
 app.put("/PostUpdate", upload.single('picture'), async (request, response)=>{
     try{
-      const errorInFile = await Post.updatePost(request.file, request.body.title, request.body.articleContent, request.body.articleId )
-      if(errorInFile){
-            response.status(400).send(errorInFile)
-            return
-        }
-        response.status(200).send("article was updated")
+      await Post.updatePost(request.file, request.body.title, request.body.articleContent, request.body.articleId )
+      const updatedPost = await Post.findPostById(request.body.articleId)
+      response.status(200).json(updatedPost)
     }
     catch(e)  {
             response.status(500).send(e.name)

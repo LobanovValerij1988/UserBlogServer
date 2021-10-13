@@ -53,30 +53,35 @@ async function savePost (file, title, articleContent, userId) {
         if (file) {
             const errorInFile =await fileWorker.isFileCorrect(file);
             if(errorInFile){
-                return errorInFile
+                throw new Error(errorInFile);
             }
             fileName = await fileWorker.saveFileFromRequest(file)
         }
-        await Post.create({title: title, articleContent: articleContent, userId: userId, picture: fileName})
+      return await Post.create({title: title, articleContent: articleContent, userId: userId, picture: fileName})
 }
 
 async  function  updatePost (file, title, articleContent, articleId ) {
     if(file){
         const errorInFile =await fileWorker.isFileCorrect(file);
         if(errorInFile){
-             return errorInFile;
+             throw new Error(errorInFile);
         }
         await deletePostByIdAndFile(articleId,false)
         const fileNameNew = await fileWorker.saveFileFromRequest(file);
-        await Post.update({title: title, articleContent: articleContent,picture: fileNameNew }, {where: {id: articleId }})
+        return await Post.update({title: title, articleContent: articleContent,picture: fileNameNew }, {where: {id: articleId }})
      }
     else {
        await Post.update({ title: title, articleContent: articleContent }, {where: {id: articleId}})
     }
 }
 
+async  function findPostById(articleId){
+     return await Post.findOne({where:{id: articleId}})
+}
+
 module.exports.getAllPostsForUser = getAllPostsForUser
 module.exports.deletePostByIdAndFile = deletePostByIdAndFile;
 module.exports.savePost = savePost;
 module.exports.updatePost = updatePost;
+module.exports.findPostById = findPostById
 module.exports.Post = Post;
